@@ -6,5 +6,5 @@
 	"description": "Export Fountain screenplay files to PDF using industry-standard formatting.",
 	"author": "jaide",
 	"authorUrl": "https://github.com/jaidetree",
-	"isDesktopOnly": false
+	"isDesktopOnly": true
 }
