@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "fountain-export",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Export Fountain screenplay files to PDF using industry-standard formatting.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
