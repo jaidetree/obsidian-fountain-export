@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "fountain-export",
+	"name": "Fountain Export",
 	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"minAppVersion": "1.12",
+	"description": "Export Fountain screenplay files to PDF using industry-standard formatting.",
+	"author": "jaide",
+	"authorUrl": "https://github.com/jaidetree",
 	"isDesktopOnly": false
 }

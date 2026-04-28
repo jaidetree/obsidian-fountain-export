@@ -1,6 +1,48 @@
 import esbuild from "esbuild";
 import process from "process";
 import { builtinModules } from 'node:module';
+import fs from 'fs';
+import path from 'path';
+
+// Replaces every fs.readFileSync(__dirname + '/data/*.afm') and the ICC profile
+// read inside pdfkit with inline string/buffer literals so that __dirname is
+// never consulted at runtime.  This is necessary because Obsidian loads plugins
+// via a custom URL scheme that sets __dirname to the Electron app bundle
+// instead of the plugin directory.
+const inlinePdfkitFontsPlugin = {
+	name: 'inline-pdfkit-fonts',
+	setup(build) {
+		build.onLoad({ filter: /pdfkit[/\\]js[/\\]pdfkit\.js$/ }, (args) => {
+			let contents = fs.readFileSync(args.path, 'utf8');
+			const dataDir = path.join(path.dirname(args.path), 'data');
+
+			// Inline only the Courier family — the only fonts we use.
+			for (const name of ['Courier', 'Courier-Bold', 'Courier-Oblique', 'Courier-BoldOblique']) {
+				const afm = fs.readFileSync(path.join(dataDir, name + '.afm'), 'utf8');
+				contents = contents.replaceAll(
+					`fs.readFileSync(__dirname + '/data/${name}.afm', 'utf8')`,
+					JSON.stringify(afm),
+				);
+			}
+
+			// Inline the ICC colour profile (loaded at document finalisation).
+			const icc = fs.readFileSync(path.join(dataDir, 'sRGB_IEC61966_2_1.icc'));
+			contents = contents.replace(
+				"fs.readFileSync(`${__dirname}/data/sRGB_IEC61966_2_1.icc`)",
+				`Buffer.from('${icc.toString('base64')}', 'base64')`,
+			);
+
+			// Any remaining __dirname font reads are for fonts we never use.
+			// Replace with a throw so a clear error surfaces if we're wrong.
+			contents = contents.replace(
+				/fs\.readFileSync\(__dirname \+ '\/data\/[^']+\.afm', 'utf8'\)/g,
+				"(() => { throw new Error('Font not bundled'); })()",
+			);
+
+			return { contents, loader: 'js' };
+		});
+	},
+};
 
 const banner =
 `/*
@@ -17,9 +59,11 @@ const context = await esbuild.context({
 	},
 	entryPoints: ["src/main.ts"],
 	bundle: true,
+	platform: "node",
 	external: [
 		"obsidian",
 		"electron",
+		"@electron/remote",
 		"@codemirror/autocomplete",
 		"@codemirror/collab",
 		"@codemirror/commands",
@@ -39,6 +83,7 @@ const context = await esbuild.context({
 	treeShaking: true,
 	outfile: "main.js",
 	minify: prod,
+	plugins: [inlinePdfkitFontsPlugin],
 });
 
 if (prod) {
