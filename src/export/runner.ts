@@ -14,7 +14,7 @@ export async function runExport(plugin: Plugin, file: TFile): Promise<void> {
 	try {
 		await exportFountain(processed, outputPath);
 	} catch (err) {
-		console.error('Fountain Export failed:', err);
-		new Notice('Fountain Export failed. See console for details.');
+		console.error('Fountain export failed:', err);
+		new Notice('Fountain export failed. See console for details.');
 	}
 }

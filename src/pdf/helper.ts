@@ -3,9 +3,9 @@ export function versionGenerator(current?: string): (level?: number) => string {
 	const numbers: number[] = seed.split('.').map(Number).concat([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
 	const bump = function (level: number) {
-		(numbers as number[])[level - 1]! += 1;
+		numbers[level - 1]! += 1;
 		for (let i = level; i < numbers.length; i++) {
-			(numbers as number[])[i] = 0;
+			numbers[i] = 0;
 		}
 	};
 
