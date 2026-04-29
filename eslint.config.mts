@@ -12,8 +12,6 @@ export default tseslint.config(
 				// no-undef doesn't know about these since they're type-only globals.
 				PDFKit: 'readonly',
 				NodeJS: 'readonly',
-				// Electron renderer process exposes require() as a global.
-				require: 'readonly',
 			},
 			parserOptions: {
 				projectService: {

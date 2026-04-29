@@ -1,4 +1,6 @@
-// Ambient type declarations for aw-parser and aw-liner.
+// Ambient type declarations for aw-parser, aw-liner, and @electron/remote.
+// These packages ship no TypeScript types (or are runtime-only externals);
+// shapes below are derived from their published APIs.
 // These packages ship no TypeScript types; the shapes below are derived from
 // runtime inspection of the actual module exports.
 
@@ -136,4 +138,14 @@ declare module 'aw-liner' {
 	}
 
 	export { Liner, LinerOptions };
+}
+
+declare module '@electron/remote' {
+	interface SaveDialogFilter { name: string; extensions: string[] }
+	interface SaveDialogResult { canceled: boolean; filePath?: string }
+	interface SaveDialogOptions { defaultPath?: string; filters?: SaveDialogFilter[] }
+
+	export const dialog: {
+		showSaveDialog(options: SaveDialogOptions): Promise<SaveDialogResult>;
+	};
 }
